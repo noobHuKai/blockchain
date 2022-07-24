@@ -1,23 +1,11 @@
 use crate::block::Block;
 use bytes::Bytes;
-use serde::{ser::SerializeStruct, Serialize};
+use serde::Serialize;
 
-#[derive(Debug)]
+#[derive(Debug, Serialize)]
 pub struct Blockchain {
-    blocks: Vec<Block>,
+    pub blocks: Vec<Block>,
     height: usize,
-}
-
-impl Serialize for Blockchain {
-    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
-    where
-        S: serde::Serializer,
-    {
-        let mut s = serializer.serialize_struct("Blockchain", 2)?;
-        s.serialize_field("blocks", &self.blocks)?;
-        s.serialize_field("height", &self.height)?;
-        s.end()
-    }
 }
 
 impl Blockchain {
