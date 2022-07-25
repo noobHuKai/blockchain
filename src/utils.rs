@@ -1,4 +1,3 @@
-use bytes::Bytes;
 use sha2::{Digest, Sha256};
 
 pub mod bytes_serde_format {
@@ -8,14 +7,13 @@ pub mod bytes_serde_format {
     where
         S: Serializer,
     {
-        let res = std::str::from_utf8(&data).unwrap();
-        serializer.serialize_str(&res)
+        let res = std::str::from_utf8(data).unwrap();
+        serializer.serialize_str(res)
     }
 }
 
-pub fn sha256_encrypt(data: String) -> Bytes {
+pub fn sha256_encrypt(data: String) -> Vec<u8> {
     let mut hasher = Sha256::new();
     hasher.update(data);
-    let hex_hash = hex::encode(hasher.finalize());
-    Bytes::from(hex_hash)
+    hasher.finalize().to_vec()
 }

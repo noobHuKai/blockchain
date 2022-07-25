@@ -1,3 +1,4 @@
+use crate::proof::{ProofOfWork, TARGET_BITS};
 use crate::utils::bytes_serde_format;
 use bytes::Bytes;
 use chrono::Utc;
@@ -21,7 +22,7 @@ pub struct Block {
 
 impl Block {
     pub fn new(data: String, prev_hash: Bytes) -> Self {
-        let mut b = Block {
+        let b = Block {
             header: BlockHeader {
                 timestamp: Utc::now().timestamp(),
                 prev_hash,
@@ -30,7 +31,12 @@ impl Block {
             data,
             hash: Bytes::new(),
         };
-        b
+        let mut pow = ProofOfWork::new(TARGET_BITS, b);
+        let (nonce, hash) = pow.run();
+        let mut block = pow.get_block();
+        block.set_nonce(nonce);
+        block.set_hash(Bytes::from(hex::encode(hash)));
+        block
     }
     pub fn prepare_data(&mut self) -> String {
         let mut res = String::new();
@@ -52,6 +58,7 @@ impl Block {
         self.header.nonce = nonce;
     }
 
+    #[allow(dead_code)]
     pub fn to_string_pretty(&self) -> String {
         serde_json::to_string_pretty(self).unwrap()
     }
