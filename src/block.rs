@@ -62,4 +62,8 @@ impl Block {
     pub fn to_string_pretty(&self) -> String {
         serde_json::to_string_pretty(self).unwrap()
     }
+
+    pub fn to_string(&self) -> String {
+        serde_json::to_string(self).unwrap()
+    }
 }
