@@ -2,9 +2,9 @@ use crate::proof::{ProofOfWork, TARGET_BITS};
 use crate::utils::bytes_serde_format;
 use bytes::Bytes;
 use chrono::Utc;
-use serde::Serialize;
+use serde::{Deserialize, Serialize};
 
-#[derive(Debug, Serialize, Clone)]
+#[derive(Debug, Serialize, Deserialize, Clone)]
 struct BlockHeader {
     timestamp: i64,
     #[serde(with = "bytes_serde_format")]
@@ -12,7 +12,7 @@ struct BlockHeader {
     nonce: u128,
 }
 
-#[derive(Debug, Serialize, Clone)]
+#[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct Block {
     header: BlockHeader,
     data: String,
@@ -58,7 +58,9 @@ impl Block {
         self.header.nonce = nonce;
     }
 
-    #[allow(dead_code)]
+    pub fn get_pre_hash(&self) -> Bytes {
+        self.header.prev_hash.clone()
+    }
     pub fn to_string_pretty(&self) -> String {
         serde_json::to_string_pretty(self).unwrap()
     }

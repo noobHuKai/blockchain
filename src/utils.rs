@@ -2,7 +2,7 @@ use sha2::{Digest, Sha256};
 
 pub mod bytes_serde_format {
     use bytes::Bytes;
-    use serde::Serializer;
+    use serde::{Deserialize, Deserializer, Serializer};
     pub fn serialize<S>(data: &Bytes, serializer: S) -> Result<S::Ok, S::Error>
     where
         S: Serializer,
@@ -10,20 +10,15 @@ pub mod bytes_serde_format {
         let res = std::str::from_utf8(data).unwrap();
         serializer.serialize_str(res)
     }
-}
-pub mod vec_bytes_serde_format {
-    use bytes::Bytes;
-    use serde::Serializer;
-    pub fn serialize<S>(data: &Vec<Bytes>, serializer: S) -> Result<S::Ok, S::Error>
+
+    pub fn deserialize<'de, D>(deserializer: D) -> Result<Bytes, D::Error>
     where
-        S: Serializer,
+        D: Deserializer<'de>,
     {
-        // let res = std::str::from_utf8(data).unwrap();
-        // serializer.serialize_str(res)
-        serializer.collect_seq(data.iter().map(|s| std::str::from_utf8(s).unwrap()))
+        let s = String::deserialize(deserializer)?;
+        Ok(Bytes::from(s))
     }
 }
-
 pub fn sha256_encrypt(data: String) -> Vec<u8> {
     let mut hasher = Sha256::new();
     hasher.update(data);

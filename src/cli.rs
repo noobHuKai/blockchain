@@ -11,5 +11,8 @@ pub struct Cli {
 #[clap(rename_all = "lower")]
 pub enum Commands {
     PrintChain,
-    AddBlock,
+    AddBlock {
+        #[clap(value_parser)]
+        data: String,
+    },
 }

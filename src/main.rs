@@ -10,17 +10,18 @@ use clap::Parser;
 use cli::{Cli, Commands};
 
 fn main() {
-    // let mut bc = Blockchain::new();
-    // bc.add_block("data".to_string());
-    // println!("{}", &bc.to_string_pretty());
-
+    let mut bc = Blockchain::new();
     let cli = Cli::parse();
 
     match &cli.command {
         Some(Commands::PrintChain) => {
-            println!("print chain");
+            for b in bc {
+                println!("{}\n", &b.to_string_pretty());
+            }
         }
-        Some(_) => {}
+        Some(Commands::AddBlock { data }) => {
+            bc.add_block(data.clone());
+        }
         None => {}
     }
 }
